@@ -1,0 +1,330 @@
+# STAT 327 Homework 1
+
+The `.Rmd` version of this file is [here](http://www.stat.wisc.edu/~jgillett/327-3/1/hw1.Rmd). Thanks to Guilherme Ludwig for this assignment.
+
+We'll grade your homework by opening your "hw1.Rmd" file in RStudio (in a directory containing the data files), clicking "Knit HTML", reading the HTML output, and reading your "hw1.Rmd" file. You should write R code anywhere you see an empty R code chunk.
+
+Name: HAO PAN 
+
+Email: hpan56@wisc.edu
+
+# Part 1: Robust Regression
+
+Consider the dataset we used in 327-2 that has the land and farm area in square miles for all U.S. states:
+
+```{r}
+area <- read.csv("http://www.stat.wisc.edu/~jgillett/327-3/1/farmLandArea.csv")
+str(area)
+```
+
+We want to build a regression model for `farm`, explained by `land`, but we know Alaska is an outlier (and Texas is a leverage point, that is, one with an extreme $x$ coordinate). The normal least squares line is found by choosing the parameters $\beta_0$ and $\beta_1$ that minimize
+\[
+S(\beta_0,\beta_1) = \frac{1}{n} \sum_{i=1}^n \text{square}(y_i - \beta_0 - \beta_1 x_i)
+\]
+
+where $\text{square}(t) = t^2$; that is, normal least squares minimizes the sum of squared residuals.
+
+An alternative to fitting a least squares line is to fit a line based on Tukey's $\rho$ norm, that is, finding the parameters $\beta_0$ and $\beta_1$ that minimize
+
+\[
+\text{Tukey}(\beta_0,\beta_1) = \frac{1}{n} \sum_{i=1}^n \rho(y_i - \beta_0 - \beta_1 x_i)
+\]
+
+where $\rho(t)$ is given by
+
+\[
+\rho(t) = \begin{cases}
+t^2, &  |t| \leq k \\
+2 k |t| - k^2, &  |t| > k
+\end{cases}
+\]
+
+Notice that $\rho(t)$ is the same as $\text{square}(t)$ for small $t$, and it is approximately a constant times $|t|$ for large $t$. Since a constant times $|t|$ is much smaller than $\text{square}(t)$ for large $t$, the $\rho(t)$ function places less importance on outliers than does the usual $\text{square}(t)$ function when used to estimate a line. It's differentiable, unlike $|t|$.
+
+We'll use gradient-based methods (among others) to minimize $\text{Tukey}(\beta_0,\beta_1)$, so we'll need its gradient. We can differentiate $\rho(t)$ to get
+
+\[
+\rho\prime(t) = \begin{cases}
+2 t, &  |t| \leq k \\
+2 k \, \mbox{sign}(t), &  |t| > k
+\end{cases}
+\]
+
+which means that
+
+\[
+\frac{\partial}{\partial \beta_0} \text{Tukey}(\beta_0,\beta_1) = - \frac{1}{n} \sum_{i=1}^n \rho\prime (y_i - \beta_0 - \beta_1 x_i)
+\]
+\[
+\frac{\partial}{\partial \beta_1} \text{Tukey}(\beta_0,\beta_1) = - \frac{1}{n} \sum_{i=1}^n x_i \rho\prime (y_i - \beta_0 - \beta_1 x_i)
+\]
+
+(Note that this robust method is implemented in the `MASS` package in the function `rlm()`. While you're welcome to use this function to check that your code works, you must code your solution yourself without using `rlm()`.)
+
+a. Create a scatterplot of `farm` vs. `land`. Include the least
+squares regression line colored "limegreen". (Notice that it is
+heavily influenced by the outlier, Alaska.)
+
+b. Fix $k=19000$. Estimate $\beta_0$ and $\beta_1$ using the
+Nelder-Mead method in `optim()` with the initial parameters
+`c(0 ,0)`. Add this line to your plot colored "navy".
+
+c. Change the method to BFGS to get another set of estimates.
+Add this line to your plot colored "black".
+
+d. Change the method to CG to get another set of estimates. Add this
+line to your plot colored "coral" and with line type "dashed".
+
+e. Add a legend to your plot.
+
+```{r}
+#question a
+plot(y = area$farm, x = area$land, xlab = "land area", ylab = "farm area")
+result1 <- lm(farm ~ land, data = area)
+abline(result1, col ="limegreen")
+# question b
+k = 19000
+tukey.gr = function(par){
+  b0 = par[1]
+  b1 = par[2]
+  input = area$farm - b0 -b1*area$land
+  p0 = NULL
+  p1 = NULL
+  for (i in (1:length(input))){
+    if (abs(input[i]) > k){
+      p0[i] = 2*k*sign(input[i])
+      p1[i] = p0[i]*area$land[i]
+    }
+    else {
+      p0[i] = 2*input[i]
+      p1[i] = p0[i]*area$land[i]
+    }
+  }
+  p0 = -mean(p0)
+  p1 = -mean(p1)
+  return(c(p0,p1)) 
+}
+tukey = function(par){
+  b0 = par[1]
+  b1 = par[2]
+  input = area$farm - b0 - b1 *area$land
+  p = NULL
+  for (i in (1:length(input))){
+    if (abs(input[i]) > k){
+      p[i] = 2*k*abs(input[i])-k^2
+    }
+    else {
+      p[i] = input[i]^2
+    }
+  }
+  p = mean(p)
+  return(p)
+}
+result2 = optim(par = c(0,0), fn=tukey, method = "Nelder-Mead")
+abline(a =result2$par[1], b =result2$par[2], col = "navy")
+#question c
+result3 = optim(par = c(0,0), fn=tukey, gr = tukey.gr, method = "BFGS")
+abline(a =result3$par[1], b =result3$par[2], col = "black")
+#question d
+result4 = optim(par = c(0,0), fn=tukey, gr = tukey.gr, method = "CG")
+abline(a =result4$par[1], b =result4$par[2], col = "coral", lty = "dashed")
+#question e
+legend(x="topleft", legend=c("Least square", "Nelder-Mead", "BFGS", "CG"),
+       lty=c(1,1,1,2), col=c("limegreen","navy","black","coral"))
+```
+
+f. For which method was the value of the Tukey function the smallest?
+
+Nelder-Mead method gives the smallest value of Tukey function.
+
+g. Create a plot of your $\rho(t)$ function (using `curve()`) over the
+interval $t \in (-100000,100000)$. Do you have an intuition of why the
+robust line is less influenced by the outliers in the data?
+
+```{r}
+pfunction = function(t){
+  p = NULL
+  for (i in (1:length(t))){
+    if (abs(t[i]) > k){
+      p[i] = 2*k*abs(t[i])-k^2
+    }
+    else {
+      p[i] = t[i]^2
+    }
+  }  
+  return(p)
+}
+curve(expr = pfunction, from = -100000, to = 100000)
+
+```
+
+# Part 2: Exponential smoothing
+
+Consider the `nhtemp` dataset which holds yearly average measurements of temperature for New Hampshire, from 1912 to 1971
+
+```{r}
+require(datasets)
+str(nhtemp)
+```
+
+We want to fit an exponential smoothing model to this data such that
+$\hat{Y}_1 = Y_1$ and, for $i = 2, 3, \ldots, n$,
+\[ 
+\hat{Y}_i = \beta Y_{i-1} + (1-\beta) \hat{Y}_{i-1}
+\]
+where $\beta$ is a constant between 0 and 1.
+
+We will choose the parameter estimate $\hat{\beta}$ that minimizes the mean forecast error
+
+\[
+FE(\beta) = \frac{1}{n} \sum_{i=2}^n \left( Y_i - \hat{Y}_i \right)^2
+\]
+
+The derivatives of this function are rather complicated (notice that $\hat{Y}_i$ is a function of $\beta$), so let's use a derivative-free method based on the function `optimize()`.
+
+(Note that exponential smoothing is done in the function `HoltWinters()`. While you are welcome to use this function to check that your code works, you must code your solution yourself without using `HoltWinters()`.)
+
+a. Using `optimize()` on the interval $[0,1]$, find the value of $\beta$ that produces the minimum forecast error.
+
+```{r}
+predict = function(b){
+  n = length(nhtemp)
+  nhtemp.hat = NULL
+  nhtemp.hat[1] = nhtemp[1]
+  for(i in (2:n)){
+    nhtemp.hat[i] = b*nhtemp[i-1] + (1-b)*nhtemp.hat[i-1]
+  }
+  return(nhtemp.hat)
+}
+error = function(b){
+  nhtemp.hat = predict(b)
+  error = mean((nhtemp.hat[2:60]-nhtemp[2:60])^2)
+  return(error)
+}
+result4 = optimize(error,c(0,1))
+result4
+cat(seq = "", "The value of the parameter is ", result4$minimum)
+```
+
+b. Plot the yearly average measurements of temperature for New Hampshire, from 1912 to 1971, and overlay the exponential smoothing of it using `lines()` (use a different color).
+
+```{r}
+nhtemp.hat = predict(result4$minimum)
+plot(nhtemp, ylab = "average temperature")
+lines(c(1913:1971),nhtemp.hat[2:60], col = "red")
+```
+
+c. Reproduce the previous plot, but include some other levels of smoothing, say $\beta=0.1$ and $\beta=0.9$. Use different colors and include a legend.
+
+```{r}
+nhtemp.hat1 = predict(0.1)
+nhtemp.hat9 = predict(0.9)
+plot(nhtemp, ylab = "average temperature")
+lines(c(1912:1971),nhtemp.hat, col = "red")
+lines(c(1912:1971),nhtemp.hat1, col = "blue")
+lines(c(1912:1971),nhtemp.hat9, col = "limegreen")
+b.1 = expression(beta == 0.1)
+b.9 = expression(beta == 0.9)
+legend(x = "topleft", legend = c("original","exponential smoothing", b.1, b.9),
+       lty = c(1,1,1,1), col = c("black", "red", "blue", "limegreen"))
+```
+
+# Part 3: Optimization for Maximum Likelihood Estimation
+## 3(a), a warm-up: MLE for mean and standard deviation of a random sample from $N(\mu, \sigma)$
+(If you're in a hurry to write code, you may skip past this background material to the line below that starts "Use `optim()` ... .")
+
+Here we'll use optimization to confirm that, given a simple random sample $X_1, \ldots, X_n$ from $N(\mu, \sigma^2)$, the maximum-likelihood estimates for the unknown mean $\mu$ and standard deviation $\sigma$ are $$\hat{\mu} = \frac{1}{n} \sum_{i=1}^n X_i$$ and $$\hat{\sigma} = \sqrt{\frac{1}{n} \sum_{i=1}^n (X_i - \hat{\mu})^2}$$
+
+Since each $X_i \sim N(\mu, \sigma^2)$ has the probability density function $$f(x_i; \mu, \sigma) = \frac{1}{\sqrt{2 \pi} \sigma} \exp\left(-\frac{(x_i - \mu)^2}{2 \sigma^2}\right)$$ and the $X_i$'s are independent, the density function for the sample is $$f(x_1, \ldots, x_n; \mu; \sigma) = \prod_{i=1}^n f(x_i; \mu, \sigma) = \left(\frac{1}{\sqrt{2 \pi} \sigma}\right)^n \exp\left(-\frac{1}{{2 \sigma^2}} \sum_{i=1}^n (x_i - \mu)^2\right)$$
+
+If we now consider the sample $(x_1, \ldots, x_n)$ as fixed, then $f(x_1, \ldots, x_n; \mu; \sigma)$ can be regarded as a function of $\mu$ and $\sigma$ called the likelihood, $L$: $$L(\mu, \sigma; x_1, \ldots, x_n) = f(x_1, \ldots, x_n; \mu; \sigma)$$
+
+We want to use optimization to find the $(\mu, \sigma)$ pair that maximizes $L(\mu, \sigma; x_1, \ldots, x_n)$. However, computing $L$ is problematic because its product of small numbers often leads to underflow, in which the product is closer to zero than a computer can represent with the usual floating-point arithmetic. Taking logarithms addresses this problem by transforming products of very small positive numbers to sums of moderate negative numbers. For example, $10^{-10}$ is very small, but $\log(10^{-10}) \approx -23.03$ is moderate. With this in mind, the log likelihood $l$ is $$l(\mu, \sigma; x_1, \ldots, x_n) = \log\left(L(\mu, \sigma; x_1, \ldots, x_n)\right) = n \log\left(\frac{1}{\sqrt{2 \pi} \sigma}\right) -\frac{1}{{2 \sigma^2}} \sum_{i=1}^n (x_i - \mu)^2$$
+Since the logarithm is an increasing function, the maximum of $l$ occurs at the same location $(\mu, \sigma)$ as the maximum of $L$.
+
+Use `optim()` with its default Nelder-Mead method to find the estimates of $\mu$ and $\sigma$ that maximize $l$ over the data $x_1, \ldots, x_n =$ `mtcars$mpg`. Check your `optim()` estimates by comparing them to the sample mean and (population) standard deviation.
+
+```{r}
+loglikelihood = function(par){
+  mu = par[1]
+  sigma = par[2]
+  x = mtcars$mpg
+  n = length(x)
+  value = n*log(1/(sqrt(2*pi)*sigma))-(1/(2*sigma^2))*sum((x-mu)^2)
+  return(-value)
+}
+op1 = optim(par=c(1,1), fn = loglikelihood, method = "Nelder-Mead")
+cat(seq = "", "The estimated mean is", op1$par[1], ", and the estimated standard error is",op1$par[2],".")
+```
+
+## 3(b) MLE for the parameters $\beta_0$ and $\beta_1$ in logistic regression
+(If you're in a hurry to write code, you may skip past this background material to the line below that starts "Consider ... .")
+
+In simple logistic regression, we have a numeric explanatory variable $X$ and binary response variable $Y$ that takes one of two values, 0 (failure) or 1 (success). We suppose that $P(Y=1|X=x) = p(x; \beta_0, \beta_1)$ for some function $p$ of the data $x$ and two parameters $\beta_0$ and $\beta_1$, so that $P(Y=0|X=x) = 1 - p(x; \beta_0, \beta_1)$.
+Given the data $(x_1, y_1), \ldots, (x_n, y_n)$, where each $y_i \in \{0, 1\}$, the probability of the data under the model is $$f(y_1, \ldots, y_n | x_1, \ldots, x_n; \beta_0, \beta_1) = \prod_{i=1}^n p(x_i; \beta_0, \beta_1)^{y_i} (1 - p(x_i; \beta_0, \beta_1))^{1-y_i}$$
+
+A *logistic transformation* maps $p \in [0, 1]$ to $\log\left(\frac{p}{1-p}\right)$, whose range is the entire real line. We define $p(x; \beta_0, \beta_1)$ implicitly by requiring its logistic transformation to be linear: $$\log\left(\frac{p(x; \beta_0, \beta_1)}{1-p(x; \beta_0, \beta_1)}\right) = \beta_0 + \beta_1 x$$
+
+Solving for $p(x; \beta_0, \beta_1)$ gives
+$$p(x; \beta_0, \beta_1) = \frac{1}{1 + \exp(-(\beta_0 + \beta_1 x))}$$
+
+The likelihood of $(\beta_1, \beta_1)$ given the data is then $$L(\beta_0, \beta_1; x_1, \ldots, x_n, y_1, \ldots, y_n) = \prod_{i=1}^n \left(\frac{1}{1 + \exp(-(\beta_0 + \beta_1 x_i))}\right)^{y_i} \left(1 - \frac{1}{1 + \exp(-(\beta_0 + \beta_1 x_i))}\right)^{1-y_i}$$
+and the log likelihood is (after a few lines of work)
+$$l(\beta_0, \beta_1; x_1, \ldots, x_n, y_1, \ldots, y_n) = -\sum_{i=1}^n \log(1 + \exp(\beta_0 + \beta_1 x_i)) + \sum_{i=1}^n y_i (\beta_0 + \beta_1 x_i)$$
+
+Consider the `menarche` data frame in the `MASS` package (`require("MASS"); ?menarche`). It gives proportions of girls at various ages who have reached menarche. Here are its first, tenth, and last rows:
+```{r}
+require("MASS")
+menarche[c(1, 10, 25), ]
+```
+The first row says "0 out of 376 girls with average age 9.21 have reached menarche." The tenth row says "29 out of 93 girls with average age 12.33 have reached menarche." The last row says "1049 out of 1049 girls with average age 17.58 have reached menarche."
+
+Here I'll make a second data frame called `menarche.cases` from `menarche` that gives one line for each girl in the study indicating her age and whether (1) or not (0) she has reached menarche. You may study or ignore this code block as you wish.
+```{r}
+success.indices = rep(x=seq_len(nrow(menarche)), times=menarche$Menarche)
+success.ages = menarche$Age[success.indices]
+success = data.frame(age=success.ages, reached.menarche=1)
+failure.indices = rep(x=seq_len(nrow(menarche)), times=menarche$Total - menarche$Menarche)
+failure.ages = menarche$Age[failure.indices]
+failure = data.frame(age=failure.ages, reached.menarche=0)
+menarche.cases = rbind(success, failure)
+menarche.cases = menarche.cases[order(menarche.cases$age), ]
+rownames(menarche.cases) = NULL # Remove incorrectly ordered rownames; they get restored correctly.
+```
+
+Here are a few lines of `menarche.cases`:
+```{r}
+menarche.cases[c(1000, 1500, 2000), ]
+```
+Line 1000 of `menarche.cases` is for a girl about 11.58 years old who has not reached menarche. Line 1500 is for a girl about 12.83 years old who has reached menarche. Line 2000 is for a girl about 13.83 years old who has not reached menarche.
+
+Use `optim()` with its default Nelder-Mead method to find the estimates of $\beta_0$ and $\beta_1$ that maximize $l$ over the data $x_1, \ldots, x_n, y_1, \ldots, y_n =$ `age`, `reached.menarche` from `menarche.cases`. Check your `optim()` estimates by making a graph with these elements:
+
+* The 3918 points (x=age, y=reached.menarche) from `menarche.cases`. Since there are only 25 ages,  these points would overlap a lot. To fix the overlap, use `jitter()` to add a little random noise to each vector of coordinates. For example, `jitter(c(1, 2, 3))` gives something like `c(1.044804, 1.936708, 2.925454)`.
+* The 25 points $(x_i, y_i)$ where $x_i$ is the $i$th age in the original `menarche` data frame, and $y_i$ is the proportion of girls of that age who have reached menarche.
+* The curve $y = p(x; \beta_0, \beta_1)$, which should fit the previous 25 proportions quite well.
+
+```{r}
+llike = function(par){
+  x = menarche.cases$age
+  y = menarche.cases$reached.menarche
+  b0 = par[1]
+  b1 = par[2]
+  value = -sum(log(1+exp(b0+b1*x)))+sum(y*(b0+b1*x))
+  return(-value)
+}
+op2 = optim(c(1,1), llike, method = "Nelder-Mead")
+x = menarche.cases$age
+y = menarche.cases$reached.menarche
+plot(jitter(x),y, xlab = "age", ylab = "y", xlim = c(8,18))
+points(menarche$Age, menarche$Menarche/menarche$Total, col = "red", pch = 16)
+prob = function(x){
+  b0 = op2$par[1]
+  b1 = op2$par[2]
+  value = 1/(1+exp(-(b0+b1*x)))
+  return(value)
+}
+curve(expr = prob, from = min(menarche.cases$age), to = max(menarche.cases$age), add = TRUE, col = "red")
+```
+
+(Note that R's `glm()` function can also find the required model. You must use `optim()`, as the goal is to practice with it. If you know `glm()`, you're welcome to use it to check your work.)
