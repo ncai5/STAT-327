@@ -1,0 +1,122 @@
+---
+title: "HW3.Rmd"
+author: "Zhendong Zhou"
+output: html_document
+---
+email: zzhou339@wisc.edu
+
+```{r}
+if (!require("png")) {
+  install.packages("png")
+  stopifnot(require("png"))
+}
+if (!require("parallel")) {
+  install.packages("parallel")
+  stopifnot(require("parallel"))
+}
+```
+##Implement a parallel mean filter for image smoothing
+
+Create a function taking a matrix argument and a k argument.
+
+
+```{r}
+filter<- function(x, k){
+  n <- dim(x)[1]
+  m <- dim(x)[2]
+  pad.x <- matrix(0, n + 2*k, m + 2*k)
+  pad.x[(k+1):(k+n), (k+1):(k+m)] <- x
+  for(i in 1:n)
+  {
+    for(j in 1:m)
+    {
+      pad.x[k+i, k+j] <- mean(pad.x[i:(2*k+i), j:(2*k+j)])
+    }
+  }
+  return(pad.x[(k+1):(k+n), (k+1):(k+m)])
+}
+```
+
+use the filter function to creat 3 channels of pictures
+
+```{r}
+vg <- readPNG("Van_Gogh.png")
+red.vg <- vg[,,1]
+green.vg <- vg[,,2]
+blue.vg <- vg[,,3]
+layout(matrix(1:3, ncol = 3))
+image(t(red.vg[nrow(red.vg):1, ]), col = gray((1:12) / 13), main = "Red channel")
+image(t(green.vg[nrow(green.vg):1, ]), col = gray((1:12) / 13), main = "Green channel")
+image(t(blue.vg[nrow(blue.vg):1, ]), col = gray((1:12) / 13), main = "Blue channel")
+```
+
+Do this in parallel, using 3 cores. Assemble the three processed matrices into an array by using the array() function. 
+
+```{r}
+n.cores <- 3
+cluster <- makePSOCKcluster(names=n.cores)
+col1 <- parApply(cl = cluster, MARGIN = 3, X = vg, FUN = filter, k = 1)
+col2 <- parApply(cl = cluster, MARGIN = 3, X = vg, FUN = filter, k = 3)
+col3 <- parApply(cl = cluster, MARGIN = 3, X = vg, FUN = filter, k = 5)
+stopCluster(cl=cluster)
+
+ary1 <- array(col1, dim = (c(dim(vg)[1], dim(vg)[2], 3)))
+ary2 <- array(col2, dim = (c(dim(vg)[1], dim(vg)[2], 3)))
+ary3 <- array(col3, dim = (c(dim(vg)[1], dim(vg)[2], 3)))
+
+writePNG(ary1, "zzhou339_1.png")
+writePNG(ary2, "zzhou339_3.png")
+writePNG(ary3, "zzhou339_5.png")
+```
+![alt text](zzhou339_1.png)
+![alt text](zzhou339_3.png)
+![alt text](zzhou339_5.png)
+
+
+## Detect egdes
+
+Do basic edge detection. Change mean() to sd() and use k = 1.
+
+```{r}
+filter1 <- function(X,k){
+  n=dim(X)[1]
+  m=dim(X)[2]
+  pad.X <- matrix(0, n+2*k, m+2*k)
+  pad.X[(k+1):(n+k), (k+1):(m+k)] <- X
+  fil.X <- matrix(0,n,m)
+  for(i in (k+1):(n+k)){
+    for(j in (k+1):(m+k)){
+      pad <- pad.X[(i-k):(i+k),(j-k):(j+k)]
+      fil.X[i-k,j-k]=sd(pad)
+      }
+  }
+  return(fil.X)
+}
+```
+
+draw the edge of picture of vangoph and madison
+
+```{r}
+n.cores <- 3
+cluster <- makePSOCKcluster(names=n.cores)
+mad <- readPNG("Madison.png")
+edg1 <- parApply(cl = cluster, MARGIN = 3, X = vg, FUN = filter1, k = 1)
+edg2 <- parApply(cl = cluster, MARGIN = 3, X = mad, FUN = filter1, k = 1)
+ary4 <- array(edg1, dim = (c(dim(vg)[1], dim(vg)[2], 3)))
+ary5 <- array(edg2, dim = (c(dim(mad)[1], dim(mad)[2], 3)))
+writePNG(ary4, "edge_vgzzhou339.png")
+writePNG(ary5, "edge_Mzzhou339.png")
+
+```
+
+![alt text](edge_vgzzhou339.png)
+![alt text](edge_Mzzhou339.png)
+
+Find edges in the Van Gogh painting. What feature of the painting is emphasized by edges from the red channel? Find edges in the Madison photo. What feature is emphasized?
+
+For the Van Gogh painting, it emphasized seagulls and waves of the sea. And for the photo of Madison, the edge of buildings and streets are emphasized.
+
+
+
+
+
