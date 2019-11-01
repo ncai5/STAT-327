@@ -1,0 +1,657 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+
+(You should start with the ``.Rmd'' file that produced what you're
+reading: \url{hw4.Rmd}. But this HTML version is easier to read.)
+
+\section{STAT 327 Homework 4}\label{stat-327-homework-4}
+
+We'll grade your homework by
+
+\begin{itemize}
+\tightlist
+\item
+  opening your ``hw4.Rmd'' file in RStudio in a directory (folder)
+  containing the data file(s)
+\item
+  clicking ``Knit HTML''
+\item
+  reading the HTML output
+\item
+  reading your ``hw4.Rmd''
+\end{itemize}
+
+You should write R code anywhere you see an empty R code chunk. You
+should write English text (surrounded by doubled asterisks,
+\texttt{**...**}, to get \textbf{boldface type}) anywhere you see
+``\ldots{}''.
+
+The HTML version of these instructions is easier to read than this plain
+text ``.Rmd'' file because the math notation is rendered nicely. So
+start by clicking ``Knit HTML''. (Then read this ``.Rmd'' file, and
+you'll see that it's not hard to make nice mathematical notation in R
+Markdown.)
+
+Include reasonable titles and labels with each of your graphs.
+
+Name: NAIQING CAI
+
+Email: \href{mailto:ncai5@wisc.edu}{\nolinkurl{ncai5@wisc.edu}}
+
+\subsection{Part 1: Statistical tests and confidence
+intervals}\label{part-1-statistical-tests-and-confidence-intervals}
+
+\subsubsection{Difference of two means}\label{difference-of-two-means}
+
+Regarding the ``mtcars'' data frame, let's investigate whether engine
+horsepower influences gas mileage. (For the sake of this exercise,
+suppose that the assumptions of the difference-of-two-means test are
+met. In fact, they probably are not met.)
+
+\subsubsection{\texorpdfstring{Make one graph consisting of three rows
+and one column, using the same \(x\)-limits, c(0, 40), and the same
+\(y\)-limits, c(0, 0.15), each
+time.}{Make one graph consisting of three rows and one column, using the same x-limits, c(0, 40), and the same y-limits, c(0, 0.15), each time.}}\label{make-one-graph-consisting-of-three-rows-and-one-column-using-the-same-x-limits-c0-40-and-the-same-y-limits-c0-0.15-each-time.}
+
+\begin{itemize}
+\tightlist
+\item
+  On top, make a density plot with rug of mpg.
+\item
+  In the middle,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    make a density plot with rug of mpg for those cars with
+    lower-than-median horsepower
+  \item
+    add a solid red circle, twice as large as the default size, at the
+    location of the mean of these data
+  \item
+    add a label ``\(\bar{x}=0\)'' (replacing ``0'' with the correct
+    value) just above the red circle (hint: see ?plotmath for the bar on
+    \(x\), ?text to create a graph label, and this
+    \href{label.html}{hint on labels})
+  \end{itemize}
+\item
+  At the bottom,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    make a density plot with rug of mpg for those cars with
+    higher-than-or-equal-to-median horsepower
+  \item
+    add a solid red circle, twice as large as the default size, at the
+    location of the mean of these data
+  \item
+    add a label ``\(\bar{x}=0\)'' (replacing ``0'' with the correct
+    value) (\href{label.html}{hint on labels})
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{3}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(m)}
+\CommentTok{# top}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{density}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg), }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{40}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.15}\NormalTok{), }\DataTypeTok{main =} \StringTok{"MPG Density Plot"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"MPG"}\NormalTok{)}
+\KeywordTok{rug}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg)}
+\CommentTok{# middle}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{density}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{<}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)]), }\DataTypeTok{main =} \StringTok{"MPG with Lower-Than-Median Horsepower Density Plot"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"MPG"}\NormalTok{, }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{40}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.15}\NormalTok{))}
+\KeywordTok{rug}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{<}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)])}
+\NormalTok{x =}\StringTok{ }\NormalTok{mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{<}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)]}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{mean}\NormalTok{(x), }\DecValTok{0}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{cex =} \DecValTok{2}\NormalTok{)}
+\NormalTok{xbar =}\StringTok{ }\KeywordTok{mean}\NormalTok{(x)}
+\KeywordTok{text}\NormalTok{(}\KeywordTok{mean}\NormalTok{(x), .}\DecValTok{04}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{bquote}\NormalTok{(}\KeywordTok{bar}\NormalTok{(x) }\OperatorTok{==}\StringTok{ }\NormalTok{.(xbar)))}
+\CommentTok{# bottom}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{density}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{>=}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)]), }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{40}\NormalTok{), }\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.15}\NormalTok{), }\DataTypeTok{main =} \StringTok{"MPG with Higher-Than-Or-Equal-To-Median Horsepower Density Plot"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"MPG"}\NormalTok{)}
+\KeywordTok{rug}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{>=}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)])}
+\NormalTok{y =}\StringTok{ }\NormalTok{mtcars}\OperatorTok{$}\NormalTok{mpg[mtcars}\OperatorTok{$}\NormalTok{hp }\OperatorTok{>=}\StringTok{ }\KeywordTok{median}\NormalTok{(mtcars}\OperatorTok{$}\NormalTok{hp)]}
+\KeywordTok{points}\NormalTok{(}\KeywordTok{mean}\NormalTok{(y), }\DecValTok{0}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{cex =} \DecValTok{2}\NormalTok{)}
+\KeywordTok{text}\NormalTok{(}\KeywordTok{mean}\NormalTok{(y), .}\DecValTok{04}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{bquote}\NormalTok{(}\KeywordTok{bar}\NormalTok{(x) }\OperatorTok{==}\StringTok{  }\NormalTok{.(}\KeywordTok{mean}\NormalTok{(y))))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{hw4_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\subsubsection{Judging only from the graph of the two samples, describe
+at least two differences in the corresponding
+populations.}\label{judging-only-from-the-graph-of-the-two-samples-describe-at-least-two-differences-in-the-corresponding-populations.}
+
+\textbf{The mean MPG for the Lower-than-Median graph is significantly
+higher than the mean of that of the Higher-than-Or-Equal-To-Median
+graph, 24.98 vs.15.77 respectively. }
+
+\textbf{The Lower-Than-Median plot is much more spread out, as values
+range from 10-40, compared to the Higher-Than-Or-Equal-To-Median range
+from roughly 7-22.}
+
+\subsubsection{\texorpdfstring{Find the P-value for testing
+\(H_0: \mu_{\text{mpg for low-power cars}} - \mu_{\text{mpg for high-power cars}} = 0\)
+against the alternative
+\(H_1: \mu_{\text{mpg for low-power cars}} - \mu_{\text{mpg for high-power cars}} > 0\).}{Find the P-value for testing H\_0: \textbackslash{}mu\_\{\textbackslash{}text\{mpg for low-power cars\}\} - \textbackslash{}mu\_\{\textbackslash{}text\{mpg for high-power cars\}\} = 0 against the alternative H\_1: \textbackslash{}mu\_\{\textbackslash{}text\{mpg for low-power cars\}\} - \textbackslash{}mu\_\{\textbackslash{}text\{mpg for high-power cars\}\} \textgreater{} 0.}}\label{find-the-p-value-for-testing-h_0-mu_textmpg-for-low-power-cars---mu_textmpg-for-high-power-cars-0-against-the-alternative-h_1-mu_textmpg-for-low-power-cars---mu_textmpg-for-high-power-cars-0.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{result =}\StringTok{ }\KeywordTok{t.test}\NormalTok{(x,y, }\DataTypeTok{alternative =} \StringTok{"greater"}\NormalTok{)}
+\NormalTok{result}\OperatorTok{$}\NormalTok{p.value}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 8.082542e-07
+\end{verbatim}
+
+What conclusion do you draw?
+
+\textbf{The p value is much less than 0.05, which means I should reject
+the null assumption and support the alternative that the MPG for
+low-power cars is greater than that of high-power cars.}
+
+\subsection{Part 2: Regression models for the price of
+beef}\label{part-2-regression-models-for-the-price-of-beef}
+
+\subsubsection{Read the data}\label{read-the-data}
+
+\begin{itemize}
+\tightlist
+\item
+  Read \url{beef.txt} into a data frame. (Hint: it requires one
+  line--see ?read.table. You may read it from a file saved in the same
+  directory as your script, or you may read it directly from the class
+  website.)
+\item
+  Display the data frame's structure
+\item
+  Display the data frame's summary
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{t =}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{"beef.txt"}\NormalTok{, }\DataTypeTok{header =}\NormalTok{ T, }\DataTypeTok{comment.char =} \StringTok{"%"}\NormalTok{)}
+\KeywordTok{str}\NormalTok{(t)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    17 obs. of  10 variables:
+##  $ YEAR : int  1925 1926 1927 1928 1929 1930 1931 1932 1933 1934 ...
+##  $ PBE  : num  59.7 59.7 63 71 71 74.2 72.1 79 73.1 70.2 ...
+##  $ CBE  : num  58.6 59.4 53.7 48.1 49 48.2 47.9 46 50.8 55.2 ...
+##  $ PPO  : num  60.5 63.3 59.9 56.3 55 59.6 57 49.5 47.3 56.6 ...
+##  $ CPO  : num  65.8 63.3 66.8 69.9 68.7 66.1 67.4 69.7 68.7 62.2 ...
+##  $ PFO  : num  65.8 68 65.5 64.8 65.6 62.4 51.4 42.8 41.6 46.4 ...
+##  $ DINC : num  51.4 52.6 52.1 52.7 55.1 48.8 41.5 31.4 29.4 33.2 ...
+##  $ CFO  : num  90.9 92.1 90.9 90.9 91.1 90.7 90 87.8 88 89.1 ...
+##  $ RDINC: num  68.5 69.6 70.2 71.9 75.2 68.3 64 53.9 53.2 58 ...
+##  $ RFP  : int  877 899 883 884 895 874 791 733 752 811 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(t)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       YEAR           PBE             CBE             PPO       
+##  Min.   :1925   Min.   :56.00   Min.   :46.00   Min.   :41.50  
+##  1st Qu.:1929   1st Qu.:63.40   1st Qu.:49.00   1st Qu.:51.00  
+##  Median :1933   Median :70.20   Median :53.70   Median :57.00  
+##  Mean   :1933   Mean   :69.06   Mean   :53.09   Mean   :56.58  
+##  3rd Qu.:1937   3rd Qu.:73.00   3rd Qu.:55.20   3rd Qu.:60.50  
+##  Max.   :1941   Max.   :82.20   Max.   :60.00   Max.   :73.90  
+##       CPO             PFO             DINC            CFO       
+##  Min.   :47.70   Min.   :41.60   Min.   :29.40   Min.   :87.30  
+##  1st Qu.:62.20   1st Qu.:47.80   1st Qu.:40.80   1st Qu.:90.00  
+##  Median :66.10   Median :51.40   Median :44.50   Median :90.70  
+##  Mean   :63.93   Mean   :54.22   Mean   :44.62   Mean   :91.01  
+##  3rd Qu.:68.70   3rd Qu.:64.80   3rd Qu.:52.10   3rd Qu.:91.10  
+##  Max.   :72.40   Max.   :68.00   Max.   :56.30   Max.   :97.50  
+##      RDINC            RFP       
+##  Min.   :53.20   Min.   :733.0  
+##  1st Qu.:64.00   1st Qu.:798.0  
+##  Median :69.60   Median :845.0  
+##  Mean   :68.65   Mean   :833.2  
+##  3rd Qu.:72.50   3rd Qu.:877.0  
+##  Max.   :89.50   Max.   :899.0
+\end{verbatim}
+
+\subsubsection{A first step after reading a data set into an R data
+frame is to check whether the categorical variables are encoded as
+factors. Does the beef data set have any categorical variables that
+should be encoded as
+factors?}\label{a-first-step-after-reading-a-data-set-into-an-r-data-frame-is-to-check-whether-the-categorical-variables-are-encoded-as-factors.-does-the-beef-data-set-have-any-categorical-variables-that-should-be-encoded-as-factors}
+
+\textbf{No, there is no any categorical variables that should be encoded
+as factors.}
+
+\subsubsection{Multiple regression}\label{multiple-regression}
+
+\begin{itemize}
+\tightlist
+\item
+  Make a multiple linear regression model for PBE (price of beef)
+  depending on the other variables (including YEAR).
+\item
+  Display the model summary.
+\item
+  Make a residual plot of residuals vs.~fitted values (both of which are
+  in your model--you don't need to do calculations):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Plot points of the form \((\hat{y}_i, e_i)\)
+  \item
+    Include the title, ``Beef: residual plot''
+  \item
+    Include the \(y\)-axis label \(e_i\) (hint: search ?plotmath for how
+    to get the subscripted \(i\))
+  \item
+    Include the \(x\)-axis label \(\hat{y}_i\) (search ?plotmath for how
+    to get the hat on the \(y\))
+  \end{itemize}
+\item
+  Make a single plot consisting of nine residual plots in a 3x3
+  arrangement. Each of these nine should have points of the form
+  \((x_{ji}, e_i)\), where \(x_{ji}\) is the \(i^{\text{th}}\)
+  observation of the \(j^{\text{th}}\) independent variable. All
+  variables other than PBE are independent variables here. None of these
+  plots requires a main title, but each should have a \(y\)-axis label
+  ``\(e_i\)'' and an \(x\)-axis label consisting of the independent
+  variable's name.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{a =}\StringTok{ }\KeywordTok{lm}\NormalTok{(t}\OperatorTok{$}\NormalTok{PBE }\OperatorTok{~}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{CBE }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{PPO }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{CPO }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{PFO }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{DINC }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{CFO }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{RDINC }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{RFP) }
+\KeywordTok{summary}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = t$PBE ~ t$CBE + t$PPO + t$CPO + t$PFO + t$DINC + 
+##     t$CFO + t$RDINC + t$RFP)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.11631 -0.43013 -0.07982  0.58022  1.71517 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 225.769097  76.551742   2.949   0.0184 *  
+## t$CBE        -1.415606   0.180946  -7.823 5.13e-05 ***
+## t$PPO        -0.476230   0.330411  -1.441   0.1875    
+## t$CPO        -0.905734   0.401141  -2.258   0.0539 .  
+## t$PFO         0.853582   2.225781   0.383   0.7113    
+## t$DINC       -1.275225   2.870046  -0.444   0.6686    
+## t$CFO        -0.215570   0.936563  -0.230   0.8237    
+## t$RDINC       0.531204   1.890445   0.281   0.7858    
+## t$RFP        -0.003525   0.128698  -0.027   0.9788    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.412 on 8 degrees of freedom
+## Multiple R-squared:  0.9792, Adjusted R-squared:  0.9584 
+## F-statistic: 47.03 on 8 and 8 DF,  p-value: 6.256e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(a}\OperatorTok{$}\NormalTok{fitted.values, a}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{main =} \StringTok{"Residual Plot: Beef"}\NormalTok{, }\DataTypeTok{xlab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{hat}\NormalTok{(y[i])), }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{hw4_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{9}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{3}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{3}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(m)}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{PBE, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"PBE"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{CBE, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"CBE"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{PPO, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"PPO"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{CPO, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"CPO"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{PFO, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"PFO"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{DINC, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"DINC"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{CFO, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"CFO"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{RDINC, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"RDINC"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{RFP, a}\OperatorTok{$}\NormalTok{residuals,}\DataTypeTok{xlab =} \StringTok{"RFP"}\NormalTok{, }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(}\KeywordTok{italic}\NormalTok{(e[i])))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{hw4_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\subsubsection{Simple linear regression}\label{simple-linear-regression}
+
+\begin{itemize}
+\tightlist
+\item
+  Look at your model summary to find the x variable whose model
+  coefficient is most significantly different from 0. (You don't have to
+  write R code to find this other variable--just read your model
+  summary.)
+\item
+  Make a simple linear regression model for PBE vs.~this x.
+\item
+  Make a scatterplot of PBE vs.~this x.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Add the simple regression line to your scatterplot.
+  \item
+    Include a reasonable title and axis labels.
+  \end{itemize}
+\end{itemize}
+
+\textbf{CBE is the x variable whose model coefficient is most
+significantly different from 0.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{1}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{)}
+\KeywordTok{layout}\NormalTok{(m)}
+\NormalTok{simple =}\StringTok{ }\KeywordTok{lm}\NormalTok{(t}\OperatorTok{$}\NormalTok{PBE }\OperatorTok{~}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{CBE)}
+\KeywordTok{plot}\NormalTok{(t}\OperatorTok{$}\NormalTok{PBE }\OperatorTok{~}\StringTok{ }\NormalTok{t}\OperatorTok{$}\NormalTok{CBE, }\DataTypeTok{main =} \StringTok{"Scatterplot of PBE vs. CBE"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"CBE"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"PBE"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{reg =}\NormalTok{ simple)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{hw4_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(simple)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = t$PBE ~ t$CBE)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.3149 -3.2682 -0.8034  1.7635 12.0610 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 133.6190    14.6366   9.129 1.63e-07 ***
+## t$CBE        -1.2161     0.2749  -4.424 0.000492 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.706 on 15 degrees of freedom
+## Multiple R-squared:  0.5662, Adjusted R-squared:  0.5372 
+## F-statistic: 19.57 on 1 and 15 DF,  p-value: 0.0004923
+\end{verbatim}
+
+\subsubsection{Are the coefficients (y-intercept and slope in the x
+direction) the same for this second simple linear regression model as
+they are in the first multiple regression
+model?}\label{are-the-coefficients-y-intercept-and-slope-in-the-x-direction-the-same-for-this-second-simple-linear-regression-model-as-they-are-in-the-first-multiple-regression-model}
+
+\textbf{The coefficients (y-intercept and slope in the x direction) are
+not the same for this second simple linear regression model as they are
+in the first multiple regression model.}
+
+\textbf{In the first multiple regression model, slope is -1.415606 and
+y-intercept is 225.769097.}
+
+\textbf{In the second simple linear regression model, slope is -1.2161
+and y-intercept is 133.6190.}
+
+\subsection{Part 3: Regression model including confidence
+bands}\label{part-3-regression-model-including-confidence-bands}
+
+\subsubsection{\texorpdfstring{Create a simulated bivariate data set
+consisting of n=100 \((x_i, y_i)\)
+pairs:}{Create a simulated bivariate data set consisting of n=100 (x\_i, y\_i) pairs:}}\label{create-a-simulated-bivariate-data-set-consisting-of-n100-x_i-y_i-pairs}
+
+\begin{itemize}
+\tightlist
+\item
+  Generate n random \(x\)-coordinates \(x_i\) from \(N(0, 1)\).
+\item
+  Generate n random errors, \(\epsilon_i\), from \(N(0, \sigma)\), using
+  \(\sigma = 4\).
+\item
+  Set \(y_i = \beta_0 + \beta_1 x_i + \epsilon_i\), where
+  \(\beta_0 = 2\), \(\beta_1 = 3\), and \(\epsilon_i \sim N(0, 4)\).
+  (That is, \(y\) is a linear function of \(x\), plus some random
+  noise.)
+\end{itemize}
+
+(Now we have simulated data. We'll pretend that we don't know the true
+y-intercept \(\beta_0 = 2\), the true slope \(\beta_1 = 3\), the true
+\(\sigma=4\), or the true errors \(\epsilon_i\). All we know are the
+data, \((x_i, y_i)\). We'll let linear regression estimate the
+coefficients.)
+
+\subsubsection{Make a graph of the data and
+model:}\label{make-a-graph-of-the-data-and-model}
+
+\begin{itemize}
+\tightlist
+\item
+  Make a scatterplot of the data, \((x_i, y_i)\).
+\item
+  Estimate a linear regression model of the form
+  \(\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 x_i\).
+\item
+  Display a summary of the model; check that the estimated coefficients
+  are near the true \(\beta_0 = 2\) and \(\beta_1 = 3\).
+\item
+  Add a solid black estimated regression line to the plot.
+\item
+  Add a dashed red true line (y = 2 + 3x) to the plot.
+\item
+  Add dotted blue 95\% pointwise confidence bands that consist, for each
+  prediction \((x_i, \hat{y}_i)\), of a vertical confidence interval
+  around \(\hat{y}_i\) centered at \((x_i, \hat{y}_i)\); the formula is
+  \(\hat{y}_i \pm t_{n-2, \alpha/2} s_{\hat{y}_i}\), where
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(\hat{y}_i\) is the predicted \(y\) at \(x = x_i\) (this is
+    available in the model you calculated)
+  \item
+    \(e_i = y_i - \hat{y}_i\), the \(i^{\text{th}}\) residual (this
+    estimate of \(\epsilon_i\) is available in the model you calculated)
+  \item
+    \(s = \sqrt{\frac{\sum_{i=1}^n e_i^2}{n - 2}}\) (this is an estimate
+    of \(\sigma\))
+  \item
+    \(s_{\hat{y}_i} = s \sqrt{\frac{1}{n} + \frac{(x_i - \bar{x})^2}{\sum_{i=1}^n (x_i - \bar{x})^2}}\)
+  \item
+    \(t_{n-2, \alpha/2}\) is the number that cuts off a right-tail area
+    .025 from a Student's \(t\) distribution with \(n-2\) degrees of
+    freedom
+  \end{itemize}
+\item
+  Add a legend identifying each of the black, red, and blue lines.
+\end{itemize}
+
+Hint: These calculations might look hard, but they go quickly with R.
+See Quiz 2's questions 8-11 for examples of efficiently translating sums
+into R code.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n =}\StringTok{ }\DecValTok{100}
+\NormalTok{x =}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ n)}
+\NormalTok{errors =}\StringTok{ }\KeywordTok{rnorm}\NormalTok{(}\DataTypeTok{n =} \DecValTok{100}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{4}\NormalTok{)}
+\NormalTok{y =}\StringTok{ }\DecValTok{2} \OperatorTok{+}\StringTok{ }\DecValTok{3}\OperatorTok{*}\NormalTok{x }\OperatorTok{+}\StringTok{ }\NormalTok{errors}
+\KeywordTok{plot}\NormalTok{(x,y, }\DataTypeTok{main =} \StringTok{"Scatter Plot for Regression Model"}\NormalTok{, }\DataTypeTok{xlab =} \KeywordTok{expression}\NormalTok{(x[i]), }\DataTypeTok{ylab =} \KeywordTok{expression}\NormalTok{(y[i]))}
+\NormalTok{m1 =}\StringTok{ }\KeywordTok{lm}\NormalTok{(y }\OperatorTok{~}\StringTok{ }\NormalTok{x)}
+\KeywordTok{summary}\NormalTok{(m1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = y ~ x)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -9.902 -2.843 -0.015  3.165  8.503 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   0.9705     0.3768   2.575   0.0115 *  
+## x             3.2227     0.3670   8.782  5.3e-14 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.767 on 98 degrees of freedom
+## Multiple R-squared:  0.4404, Adjusted R-squared:  0.4347 
+## F-statistic: 77.12 on 1 and 98 DF,  p-value: 5.301e-14
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{reg =}\NormalTok{ m1, }\DataTypeTok{col =} \StringTok{"black"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{a =} \DecValTok{2}\NormalTok{, }\DataTypeTok{b =} \DecValTok{3}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{lty =} \DecValTok{2}\NormalTok{)}
+\NormalTok{t =}\StringTok{ }\KeywordTok{qt}\NormalTok{(.}\DecValTok{025}\NormalTok{, }\DataTypeTok{df =}\NormalTok{ n }\OperatorTok{-}\StringTok{ }\DecValTok{2}\NormalTok{, }\DataTypeTok{lower.tail =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{s =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{sum}\NormalTok{(m1}\OperatorTok{$}\NormalTok{residuals}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{(n}\OperatorTok{-}\DecValTok{2}\NormalTok{))}
+\NormalTok{s.yhat =}\StringTok{ }\NormalTok{s }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{((}\DecValTok{1}\OperatorTok{/}\NormalTok{n) }\OperatorTok{+}\StringTok{ }\NormalTok{((x}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(x))}\OperatorTok{^}\DecValTok{2}\OperatorTok{/}\KeywordTok{sum}\NormalTok{((x}\OperatorTok{-}\KeywordTok{mean}\NormalTok{(x))}\OperatorTok{^}\DecValTok{2}\NormalTok{)))}
+\KeywordTok{points}\NormalTok{(x, m1}\OperatorTok{$}\NormalTok{fitted.value }\OperatorTok{+}\StringTok{ }\NormalTok{t}\OperatorTok{*}\NormalTok{s.yhat, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(x, m1}\OperatorTok{$}\NormalTok{fitted.value }\OperatorTok{-}\StringTok{ }\NormalTok{t}\OperatorTok{*}\NormalTok{s.yhat, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{)}
+\KeywordTok{legend}\NormalTok{(}\StringTok{"bottomright"}\NormalTok{, }\DataTypeTok{legend =} \KeywordTok{c}\NormalTok{(}\StringTok{"Estimated Regression Line to the Plot"}\NormalTok{, }\StringTok{"True Regression Line"}\NormalTok{, }\StringTok{"95% Pointwise Confidence Bands"}\NormalTok{), }\DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\StringTok{"black"}\NormalTok{, }\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{), }\DataTypeTok{lty =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{0}\NormalTok{), }\DataTypeTok{pch =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{hw4_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+
+\end{document}
