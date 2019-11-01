@@ -1,0 +1,94 @@
+# STAT 327 Group work on Optimization
+
+Please write the names and email addresses of your group members.
+Here's an example:
+
+* Name / email (@wisc.edu only): John Gillett / jgillett@wisc.edu
+
+* Name / email (@wisc.edu only): ...
+* Name / email (@wisc.edu only): ...
+* Name / email (@wisc.edu only): ...
+* Name / email (@wisc.edu only): ...
+* Name / email (@wisc.edu only): ...
+* Name / email (@wisc.edu only): ...
+
+# Part 1: One-dimensional optimization
+
+Graph the object's altitude vs. time.
+
+```{r}
+f = function(t) {
+  g = 9.81
+  z0 = 100
+  v0 = 55
+  m = 80
+  c = 15
+  z=z0+(m/c)*(v0+m*g/c)*(1-exp(-c*t/m))-m*g*t/c
+  z=-z
+  return(z)
+}
+
+optimize(f,c(0,15))
+curve(f,0,20)
+abline(h=0)
+
+```
+
+Find the time at which the object strikes the ground.
+
+```{r}
+
+
+```
+
+Find the object's maximum height.
+
+```{r}
+f = function(t) {
+  g = 9.81
+  z0 = 100
+  v0 = 55
+  m = 80
+  c = 15
+  z=z0+(m/c)*(v0+m*g/c)*(1-exp(-c*t/m))-m*g*t/c
+  return(-z)
+}
+max_height=-optimize(f,c(0,20))$objective[1]
+max_height
+```
+
+Find the time at which the object reaches its maximum height.
+
+```{r}
+f = function(t) {
+  g = 9.81
+  z0 = 100
+  v0 = 55
+  m = 80
+  c = 15
+  z=z0+(m/c)*(v0+m*g/c)*(1-exp(-c*t/m))-m*g*t/c
+  return(-z)
+}
+max=optimize(f,c(0,20))
+time=optimize(f,c(0,20))[1]
+time
+```
+
+# Part 2: Multi-dimensional optimization
+
+Implement `gradient.descent()`.
+
+```{r}
+
+```
+
+Graph the concentration.
+
+Use `gradient.descent()` to find the peak.
+
+Use `optim()` with `method=Nelder-Mead` to find the peak.
+
+Use `optim()` with `method=BFGS` to find the peak.
+
+How many calls did `optim()` make in each case? Which method would you
+expect to be faster?

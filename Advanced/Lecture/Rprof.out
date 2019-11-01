@@ -1,0 +1,5 @@
+line profiling: sample.interval=20000
+#File 1: nflProfile1.R
+"file" "readLines" 1#15 "eval" "eval" "withVisible" "source" 
+"file" "readLines" 1#15 "eval" "eval" "withVisible" "source" 
+"mayCallBrowserList" "mayCallBrowser" "compile" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "compiler:::tryCompile" 1#23 "eval" "eval" "withVisible" "source" 
